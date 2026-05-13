@@ -2,118 +2,650 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#0a0a0f">
-    <title>Central</title>
+    <meta name="theme-color" content="#1a1a2e">
+    <title>Central de Monitoramento</title>
+    <link rel="manifest" href="data:application/json,{'name':'Central%20Monitor','short_name':'Central','start_url':'.','display':'standalone','background_color':'%231a1a2e','theme_color':'%231a1a2e'}">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #0a0a0f; color: #e0e0e0; font-family: -apple-system, sans-serif; min-height: 100vh; }
-        .container { max-width: 500px; margin: 0 auto; padding: 16px; }
-        #loginScreen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 20px; }
-        #loginScreen h1 { font-size: 50px; }
-        #loginScreen input { width: 220px; padding: 14px; background: #111; border: 1px solid #333; border-radius: 10px; color: #fff; font-size: 22px; text-align: center; letter-spacing: 6px; text-transform: uppercase; outline: none; }
-        #loginScreen button { padding: 14px 40px; background: #00ff88; color: #000; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; }
-        .error { color: #ff3366; }
-        #mainScreen { display: none; }
-        .header { background: #111; padding: 16px; border-radius: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
-        .header h2 { color: #00ff88; }
-        .gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .card { background: #111; border-radius: 10px; overflow: hidden; }
-        .card img { width: 100%; height: 200px; object-fit: cover; cursor: pointer; }
-        .card-info { padding: 10px; display: flex; justify-content: space-between; }
-        .card-time { font-size: 11px; color: #888; }
-        .btn-del { background: rgba(255,51,102,0.2); border: none; color: #ff3366; padding: 5px 10px; border-radius: 6px; cursor: pointer; }
-        .actions { display: flex; gap: 10px; margin-top: 16px; }
-        .btn { flex: 1; padding: 14px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; }
-        .btn-danger { background: #ff3366; color: #fff; }
-        .btn-outline { background: transparent; border: 1px solid #333; color: #fff; }
-        .empty { text-align: center; padding: 60px; color: #555; }
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100; justify-content: center; align-items: center; }
-        .modal.active { display: flex; }
-        .modal img { max-width: 95%; max-height: 90vh; }
-        .modal-close { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 32px; cursor: pointer; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #1a1a2e;
+            color: #fff;
+            min-height: 100vh;
+            min-height: 100dvh;
+        }
+        
+        /* Tela de Login */
+        #loginScreen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .login-box {
+            background: #16213e;
+            padding: 30px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 350px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .login-box h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #00ff88;
+        }
+        
+        .login-box p {
+            text-align: center;
+            color: #888;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+        
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: #0f3460;
+            border: 2px solid #0f3460;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            transition: border 0.3s;
+        }
+        
+        .login-box input:focus {
+            border-color: #00ff88;
+        }
+        
+        .login-box button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background: #00ff88;
+            border: none;
+            border-radius: 8px;
+            color: #1a1a2e;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .login-box button:active {
+            transform: scale(0.95);
+        }
+        
+        .error {
+            color: #ff4757;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        /* Dashboard */
+        #dashboard {
+            display: none;
+            padding: 15px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+        }
+        
+        .header h2 {
+            color: #00ff88;
+            font-size: 18px;
+        }
+        
+        .header button {
+            background: #ff4757;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .controls button {
+            flex: 1;
+            min-width: 120px;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .controls button:active {
+            transform: scale(0.95);
+        }
+        
+        .btn-select {
+            background: #3742fa;
+        }
+        
+        .btn-select.active {
+            background: #5352ed;
+            box-shadow: 0 0 10px #5352ed;
+        }
+        
+        .btn-delete-selected {
+            background: #ff6348;
+        }
+        
+        .btn-delete-all {
+            background: #ff4757;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .filter-btn {
+            flex: 1;
+            padding: 8px;
+            background: #16213e;
+            border: 2px solid #333;
+            border-radius: 20px;
+            color: #888;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn.active {
+            background: #00ff88;
+            color: #1a1a2e;
+            border-color: #00ff88;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-box {
+            flex: 1;
+            background: #16213e;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-box .number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00ff88;
+        }
+        
+        .stat-box .label {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        
+        .gallery-item {
+            position: relative;
+            aspect-ratio: 9/16;
+            background: #16213e;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: border 0.3s;
+        }
+        
+        .gallery-item.selected {
+            border-color: #00ff88;
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .gallery-item .badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        .badge-print {
+            background: #3742fa;
+            color: #fff;
+        }
+        
+        .badge-selfie {
+            background: #ff6348;
+            color: #fff;
+        }
+        
+        .gallery-item .delete-btn {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: 25px;
+            height: 25px;
+            background: rgba(255, 71, 87, 0.9);
+            border: none;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .gallery-item.selected .delete-btn {
+            display: flex;
+        }
+        
+        .gallery-item .time {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            right: 5px;
+            background: rgba(0,0,0,0.7);
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 10px;
+            text-align: center;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #555;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #888;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div id="loginScreen">
-            <h1>📡</h1>
-            <p>Código de Acesso</p>
-            <input type="text" id="codeInput" placeholder="MEUCEL1" maxlength="7" autocomplete="off">
-            <button onclick="login()">ACESSAR</button>
-            <p class="error" id="loginError"></p>
-        </div>
-        <div id="mainScreen">
-            <div class="header">
-                <div><h2>📡 CENTRAL</h2><p id="stats"></p></div>
-                <button class="btn-del" onclick="logout()">SAIR</button>
-            </div>
-            <div class="gallery" id="gallery"></div>
-            <div class="empty" id="empty"><p>📸 Nenhuma captura</p></div>
-            <div class="actions" id="actions" style="display:none;">
-                <button class="btn btn-danger" onclick="deleteAll()">🗑 APAGAR TUDO</button>
-                <button class="btn btn-outline" onclick="loadCaptures()">🔄 ATUALIZAR</button>
-            </div>
+    <!-- Tela de Login -->
+    <div id="loginScreen">
+        <div class="login-box">
+            <h1>🔒 Central Monitor</h1>
+            <p>Digite o código da sessão para acessar</p>
+            <input type="text" id="codigoInput" placeholder="Código da sessão" autocomplete="off">
+            <button onclick="login()">Acessar</button>
+            <div class="error" id="loginError"></div>
         </div>
     </div>
-    <div class="modal" id="modal" onclick="closeModal()">
-        <span class="modal-close">✕</span>
-        <img id="modalImg" src="">
+    
+    <!-- Dashboard -->
+    <div id="dashboard">
+        <div class="header">
+            <h2>📱 Monitor: <span id="sessionCode"></span></h2>
+            <button onclick="logout()">Sair</button>
+        </div>
+        
+        <div class="controls">
+            <button class="btn-select" id="btnSelectMode" onclick="toggleSelectMode()">
+                ☐ Selecionar
+            </button>
+            <button class="btn-delete-selected" onclick="deleteSelected()" id="btnDeleteSelected" style="display:none;">
+                🗑 Apagar Selecionados
+            </button>
+            <button class="btn-delete-all" onclick="deleteAll()">
+                🗑 Apagar Tudo
+            </button>
+        </div>
+        
+        <div class="filters">
+            <div class="filter-btn active" onclick="setFilter('all')">Todos</div>
+            <div class="filter-btn" onclick="setFilter('print')">📸 Prints</div>
+            <div class="filter-btn" onclick="setFilter('selfie')">🤳 Selfies</div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-box">
+                <div class="number" id="totalPrints">0</div>
+                <div class="label">Prints</div>
+            </div>
+            <div class="stat-box">
+                <div class="number" id="totalSelfies">0</div>
+                <div class="label">Selfies</div>
+            </div>
+        </div>
+        
+        <div id="gallery" class="gallery">
+            <div class="loading">Carregando...</div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // ============ CONFIGURAÇÃO ============
         const SUPABASE_URL = 'https://vlkobipdenduyismnkpm.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_qWeCNdiMyftZ6ZMYDF9u_A_bOplqpiA';
+        
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        const SESSION_CODE = 'MEUCEL1';
-        let captures = [];
         
-        function login() {
-            if (document.getElementById('codeInput').value.trim().toUpperCase() === SESSION_CODE) {
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('mainScreen').style.display = 'block';
-                loadCaptures();
+        // ============ VARIÁVEIS ============
+        let currentSession = '';
+        let allCaptures = [];
+        let selectedIds = new Set();
+        let selectMode = false;
+        let currentFilter = 'all';
+        let realtimeSubscription = null;
+        
+        // ============ ELEMENTOS ============
+        const loginScreen = document.getElementById('loginScreen');
+        const dashboard = document.getElementById('dashboard');
+        const codigoInput = document.getElementById('codigoInput');
+        const loginError = document.getElementById('loginError');
+        const sessionCodeEl = document.getElementById('sessionCode');
+        const gallery = document.getElementById('gallery');
+        const btnSelectMode = document.getElementById('btnSelectMode');
+        const btnDeleteSelected = document.getElementById('btnDeleteSelected');
+        const totalPrints = document.getElementById('totalPrints');
+        const totalSelfies = document.getElementById('totalSelfies');
+        
+        // ============ FUNÇÕES ============
+        
+        // Login
+        async function login() {
+            const codigo = codigoInput.value.trim().toUpperCase();
+            
+            if (!codigo) {
+                loginError.textContent = 'Digite o código da sessão';
+                return;
             }
+            
+            // Verificar se existe conteúdo para esta sessão
+            const { data, error } = await supabase
+                .from('captures')
+                .select('codigo_sessao')
+                .eq('codigo_sessao', codigo)
+                .limit(1);
+            
+            if (error) {
+                loginError.textContent = 'Erro ao verificar sessão';
+                return;
+            }
+            
+            // Permitir acesso mesmo sem capturas (pode ser novo monitor)
+            currentSession = codigo;
+            loginScreen.style.display = 'none';
+            dashboard.style.display = 'block';
+            sessionCodeEl.textContent = codigo;
+            
+            // Carregar capturas
+            await loadCaptures();
+            
+            // Iniciar tempo real
+            subscribeRealtime();
         }
-        function logout() { location.reload(); }
         
+        function logout() {
+            currentSession = '';
+            allCaptures = [];
+            selectedIds.clear();
+            selectMode = false;
+            
+            loginScreen.style.display = 'flex';
+            dashboard.style.display = 'none';
+            codigoInput.value = '';
+            loginError.textContent = '';
+            
+            if (realtimeSubscription) {
+                realtimeSubscription.unsubscribe();
+                realtimeSubscription = null;
+            }
+            
+            updateUI();
+        }
+        
+        // Carregar todas as capturas
         async function loadCaptures() {
-            const { data } = await supabase.from('captures').select('*').eq('session_code', SESSION_CODE).order('id', { ascending: false }).limit(50);
-            captures = data || [];
-            render();
+            const { data, error } = await supabase
+                .from('captures')
+                .select('*')
+                .eq('codigo_sessao', currentSession)
+                .order('created_at', { ascending: false });
+            
+            if (error) {
+                console.error('Erro ao carregar:', error);
+                return;
+            }
+            
+            allCaptures = data || [];
+            updateUI();
         }
         
-        function render() {
-            document.getElementById('empty').style.display = captures.length ? 'none' : 'block';
-            document.getElementById('actions').style.display = captures.length ? 'flex' : 'none';
-            document.getElementById('gallery').innerHTML = captures.map(c => `
-                <div class="card"><img src="${c.url}" onclick="openModal('${c.url}')"><div class="card-info"><span class="card-time">${c.time}</span><button class="btn-del" onclick="event.stopPropagation();deleteOne('${c.id}')">🗑</button></div></div>
-            `).join('');
-            document.getElementById('stats').textContent = captures.length + ' capturas';
+        // Tempo real
+        function subscribeRealtime() {
+            if (realtimeSubscription) {
+                realtimeSubscription.unsubscribe();
+            }
+            
+            realtimeSubscription = supabase
+                .channel('captures-changes')
+                .on('postgres_changes', {
+                    event: '*',
+                    schema: 'public',
+                    table: 'captures',
+                    filter: `codigo_sessao=eq.${currentSession}`
+                }, (payload) => {
+                    console.log('Mudança detectada:', payload);
+                    
+                    if (payload.eventType === 'INSERT') {
+                        allCaptures.unshift(payload.new);
+                    } else if (payload.eventType === 'DELETE') {
+                        allCaptures = allCaptures.filter(c => c.id !== payload.old.id);
+                        selectedIds.delete(payload.old.id);
+                    } else if (payload.eventType === 'UPDATE') {
+                        const index = allCaptures.findIndex(c => c.id === payload.new.id);
+                        if (index !== -1) {
+                            allCaptures[index] = payload.new;
+                        }
+                    }
+                    
+                    updateUI();
+                })
+                .subscribe();
         }
         
-        async function deleteOne(id) {
-            if (!confirm('Apagar?')) return;
-            const c = captures.find(x => x.id == id);
-            if (c?.storage_path) await supabase.storage.from('captures').remove([c.storage_path]);
-            await supabase.from('captures').delete().eq('id', id);
-            captures = captures.filter(x => x.id != id);
-            render();
+        // Atualizar interface
+        function updateUI() {
+            let filtered = allCaptures;
+            
+            if (currentFilter === 'print') {
+                filtered = allCaptures.filter(c => c.tipo === 'print');
+            } else if (currentFilter === 'selfie') {
+                filtered = allCaptures.filter(c => c.tipo === 'selfie');
+            }
+            
+            // Atualizar stats
+            const prints = allCaptures.filter(c => c.tipo === 'print').length;
+            const selfies = allCaptures.filter(c => c.tipo === 'selfie').length;
+            totalPrints.textContent = prints;
+            totalSelfies.textContent = selfies;
+            
+            // Atualizar galeria
+            if (filtered.length === 0) {
+                gallery.innerHTML = '<div class="empty-state">Nenhuma captura encontrada</div>';
+            } else {
+                gallery.innerHTML = filtered.map(capture => `
+                    <div class="gallery-item ${selectedIds.has(capture.id) ? 'selected' : ''}" 
+                         onclick="${selectMode ? `toggleSelect('${capture.id}')` : `viewFullscreen('${capture.url}')`}">
+                        <img src="${capture.url}" alt="${capture.tipo}" loading="lazy">
+                        <span class="badge badge-${capture.tipo}">${capture.tipo === 'print' ? '📸' : '🤳'}</span>
+                        ${selectMode ? `<button class="delete-btn" onclick="event.stopPropagation(); toggleSelect('${capture.id}')">
+                            ${selectedIds.has(capture.id) ? '✓' : '○'}
+                        </button>` : ''}
+                        <div class="time">${formatDate(capture.created_at)}</div>
+                    </div>
+                `).join('');
+            }
+            
+            // Atualizar botões
+            btnSelectMode.textContent = selectMode ? '✓ Cancelar Seleção' : '☐ Selecionar';
+            btnSelectMode.classList.toggle('active', selectMode);
+            btnDeleteSelected.style.display = selectMode ? 'block' : 'none';
+            btnDeleteSelected.textContent = `🗑 Apagar (${selectedIds.size})`;
+            btnDeleteSelected.disabled = selectedIds.size === 0;
         }
         
+        function toggleSelectMode() {
+            selectMode = !selectMode;
+            if (!selectMode) {
+                selectedIds.clear();
+            }
+            updateUI();
+        }
+        
+        function toggleSelect(id) {
+            if (!selectMode) return;
+            
+            if (selectedIds.has(id)) {
+                selectedIds.delete(id);
+            } else {
+                selectedIds.add(id);
+            }
+            updateUI();
+        }
+        
+        function setFilter(filter) {
+            currentFilter = filter;
+            
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            updateUI();
+        }
+        
+        // Deletar selecionados
+        async function deleteSelected() {
+            if (selectedIds.size === 0) return;
+            
+            if (!confirm(`Apagar ${selectedIds.size} captura(s) selecionada(s)?`)) return;
+            
+            for (const id of selectedIds) {
+                const capture = allCaptures.find(c => c.id === id);
+                if (capture) {
+                    // Deletar do storage
+                    const filePath = `${currentSession}/${capture.tipo}/${capture.filename}`;
+                    await supabase.storage.from('captures').remove([filePath]);
+                    
+                    // Deletar do banco
+                    await supabase.from('captures').delete().eq('id', id);
+                }
+            }
+            
+            selectedIds.clear();
+            selectMode = false;
+            await loadCaptures();
+        }
+        
+        // Deletar tudo
         async function deleteAll() {
-            if (!confirm('TUDO?')) return;
-            await supabase.storage.from('captures').remove(captures.map(c => c.storage_path));
-            await supabase.from('captures').delete().eq('session_code', SESSION_CODE);
-            captures = [];
-            render();
+            if (!confirm(`Tem certeza que deseja apagar TODAS as capturas da sessão ${currentSession}?`)) return;
+            
+            // Deletar todos os arquivos do storage
+            const { data: files } = await supabase.storage
+                .from('captures')
+                .list(currentSession, {
+                    limit: 1000,
+                    sortBy: { column: 'name', order: 'asc' }
+                });
+            
+            if (files) {
+                const pathsToDelete = [];
+                for (const file of files) {
+                    if (file.name.includes('print') || file.name.includes('selfie')) {
+                        const isPrint = file.name.includes('print');
+                        pathsToDelete.push(`${currentSession}/${isPrint ? 'print' : 'selfie'}/${file.name}`);
+                    }
+                }
+                
+                if (pathsToDelete.length > 0) {
+                    await supabase.storage.from('captures').remove(pathsToDelete);
+                }
+            }
+            
+            // Deletar do banco
+            await supabase.from('captures').delete().eq('codigo_sessao', currentSession);
+            
+            selectedIds.clear();
+            selectMode = false;
+            await loadCaptures();
         }
         
-        function openModal(url) { document.getElementById('modalImg').src = url; document.getElementById('modal').classList.add('active'); }
-        function closeModal() { document.getElementById('modal').classList.remove('active'); }
+        function viewFullscreen(url) {
+            window.open(url, '_blank');
+        }
+        
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+            
+            if (diff < 60000) return 'Agora';
+            if (diff < 3600000) return `${Math.floor(diff/60000)}min atrás`;
+            if (diff < 86400000) return `${Math.floor(diff/3600000)}h atrás`;
+            
+            return date.toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        // Enter para login
+        codigoInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') login();
+        });
     </script>
 </body>
 </html>
