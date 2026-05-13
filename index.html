@@ -7,7 +7,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#1a1a2e">
     <title>Central de Monitoramento</title>
-    <link rel="manifest" href="manifest.json">
     <style>
         * {
             margin: 0;
@@ -20,7 +19,6 @@
             background: #1a1a2e;
             color: #fff;
             min-height: 100vh;
-            min-height: 100dvh;
         }
         
         #loginScreen {
@@ -70,7 +68,7 @@
             border-color: #00ff88;
         }
         
-        .login-box button {
+        #btnLogin {
             width: 100%;
             padding: 12px;
             margin-top: 20px;
@@ -81,11 +79,6 @@
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s;
-        }
-        
-        .login-box button:active {
-            transform: scale(0.95);
         }
         
         .error {
@@ -114,7 +107,7 @@
             font-size: 18px;
         }
         
-        .header button {
+        #btnLogout {
             background: #ff4757;
             border: none;
             padding: 8px 15px;
@@ -139,27 +132,22 @@
             color: #fff;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s;
         }
         
-        .controls button:active {
-            transform: scale(0.95);
-        }
-        
-        .btn-select {
+        #btnSelectMode {
             background: #3742fa;
         }
         
-        .btn-select.active {
+        #btnSelectMode.active {
             background: #5352ed;
             box-shadow: 0 0 10px #5352ed;
         }
         
-        .btn-delete-selected {
+        #btnDeleteSelected {
             background: #ff6348;
         }
         
-        .btn-delete-all {
+        #btnDeleteAll {
             background: #ff4757;
         }
         
@@ -178,7 +166,6 @@
             color: #888;
             cursor: pointer;
             text-align: center;
-            transition: all 0.3s;
         }
         
         .filter-btn.active {
@@ -226,7 +213,6 @@
             overflow: hidden;
             cursor: pointer;
             border: 3px solid transparent;
-            transition: border 0.3s;
         }
         
         .gallery-item.selected {
@@ -239,7 +225,7 @@
             object-fit: cover;
         }
         
-        .gallery-item .badge {
+        .badge {
             position: absolute;
             top: 5px;
             right: 5px;
@@ -251,15 +237,13 @@
         
         .badge-print {
             background: #3742fa;
-            color: #fff;
         }
         
         .badge-selfie {
             background: #ff6348;
-            color: #fff;
         }
         
-        .gallery-item .delete-btn {
+        .delete-btn {
             position: absolute;
             top: 5px;
             left: 5px;
@@ -280,7 +264,7 @@
             display: flex;
         }
         
-        .gallery-item .time {
+        .time {
             position: absolute;
             bottom: 5px;
             left: 5px;
@@ -296,12 +280,14 @@
             text-align: center;
             padding: 50px 20px;
             color: #555;
+            grid-column: 1 / -1;
         }
         
         .loading {
             text-align: center;
             padding: 20px;
             color: #888;
+            grid-column: 1 / -1;
         }
     </style>
 </head>
@@ -309,8 +295,8 @@
     <div id="loginScreen">
         <div class="login-box">
             <h1>🔒 Central Monitor</h1>
-            <p>Digite o código da sessão para acessar</p>
-            <input type="text" id="codigoInput" placeholder="Código da sessão" autocomplete="off">
+            <p>Digite o código da sessão</p>
+            <input type="text" id="codigoInput" placeholder="Ex: MEUCEL1" autocomplete="off">
             <button id="btnLogin">Acessar</button>
             <div class="error" id="loginError"></div>
         </div>
@@ -323,21 +309,21 @@
         </div>
         
         <div class="controls">
-            <button class="btn-select" id="btnSelectMode">☐ Selecionar</button>
-            <button class="btn-delete-selected" id="btnDeleteSelected" style="display:none;">🗑 Apagar Selecionados</button>
-            <button class="btn-delete-all" id="btnDeleteAll">🗑 Apagar Tudo</button>
+            <button id="btnSelectMode">☐ Selecionar</button>
+            <button id="btnDeleteSelected" style="display:none;">🗑 Apagar Selecionados</button>
+            <button id="btnDeleteAll">🗑 Apagar Tudo</button>
         </div>
         
         <div class="filters">
             <div class="filter-btn active" data-filter="all">Todos</div>
-            <div class="filter-btn" data-filter="print">📸 Prints</div>
+            <div class="filter-btn" data-filter="print">📸 Screenshots</div>
             <div class="filter-btn" data-filter="selfie">🤳 Selfies</div>
         </div>
         
         <div class="stats">
             <div class="stat-box">
                 <div class="number" id="totalPrints">0</div>
-                <div class="label">Prints</div>
+                <div class="label">Screenshots</div>
             </div>
             <div class="stat-box">
                 <div class="number" id="totalSelfies">0</div>
@@ -353,13 +339,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         (function() {
-            // ============ CONFIGURAÇÃO ============
             const SUPABASE_URL = 'https://vlkobipdenduyismnkpm.supabase.co';
             const SUPABASE_KEY = 'sb_publishable_qWeCNdiMyftZ6ZMYDF9u_A_bOplqpiA';
             
             const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             
-            // ============ VARIÁVEIS ============
             let currentSession = '';
             let allCaptures = [];
             let selectedIds = new Set();
@@ -367,7 +351,6 @@
             let currentFilter = 'all';
             let realtimeSubscription = null;
             
-            // ============ ELEMENTOS ============
             const loginScreen = document.getElementById('loginScreen');
             const dashboard = document.getElementById('dashboard');
             const codigoInput = document.getElementById('codigoInput');
@@ -382,12 +365,11 @@
             const totalPrints = document.getElementById('totalPrints');
             const totalSelfies = document.getElementById('totalSelfies');
             
-            // ============ FUNÇÕES ============
             function login() {
                 const codigo = codigoInput.value.trim().toUpperCase();
                 
                 if (!codigo) {
-                    loginError.textContent = 'Digite o código da sessão';
+                    loginError.textContent = 'Digite o código!';
                     return;
                 }
                 
@@ -420,19 +402,20 @@
             }
             
             async function loadCaptures() {
-                const { data, error } = await supabaseClient
-                    .from('captures')
-                    .select('*')
-                    .eq('codigo_sessao', currentSession)
-                    .order('created_at', { ascending: false });
-                
-                if (error) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('captures')
+                        .select('*')
+                        .eq('codigo_sessao', currentSession)
+                        .order('created_at', { ascending: false });
+                    
+                    if (error) throw error;
+                    
+                    allCaptures = data || [];
+                    updateUI();
+                } catch (error) {
                     console.error('Erro ao carregar:', error);
-                    return;
                 }
-                
-                allCaptures = data || [];
-                updateUI();
             }
             
             function subscribeRealtime() {
@@ -468,25 +451,21 @@
                     filtered = allCaptures.filter(c => c.tipo === 'selfie');
                 }
                 
-                const prints = allCaptures.filter(c => c.tipo === 'print').length;
-                const selfies = allCaptures.filter(c => c.tipo === 'selfie').length;
-                totalPrints.textContent = prints;
-                totalSelfies.textContent = selfies;
+                totalPrints.textContent = allCaptures.filter(c => c.tipo === 'print').length;
+                totalSelfies.textContent = allCaptures.filter(c => c.tipo === 'selfie').length;
                 
                 if (filtered.length === 0) {
-                    gallery.innerHTML = '<div class="empty-state">Nenhuma captura encontrada</div>';
+                    gallery.innerHTML = '<div class="empty-state">Nenhuma captura</div>';
                 } else {
                     gallery.innerHTML = filtered.map(capture => `
-                        <div class="gallery-item ${selectedIds.has(capture.id) ? 'selected' : ''}" 
-                             data-id="${capture.id}">
+                        <div class="gallery-item ${selectedIds.has(capture.id) ? 'selected' : ''}" data-id="${capture.id}">
                             <img src="${capture.url}" alt="${capture.tipo}" loading="lazy">
                             <span class="badge badge-${capture.tipo}">${capture.tipo === 'print' ? '📸' : '🤳'}</span>
-                            ${selectMode ? `<button class="delete-btn">${selectedIds.has(capture.id) ? '✓' : '○'}</button>` : ''}
+                            ${selectMode ? '<button class="delete-btn">' + (selectedIds.has(capture.id) ? '✓' : '○') + '</button>' : ''}
                             <div class="time">${formatDate(capture.created_at)}</div>
                         </div>
                     `).join('');
                     
-                    // Adicionar event listeners
                     document.querySelectorAll('.gallery-item').forEach(item => {
                         item.addEventListener('click', function(e) {
                             if (e.target.classList.contains('delete-btn')) return;
@@ -496,9 +475,7 @@
                                 toggleSelect(id);
                             } else {
                                 const capture = allCaptures.find(c => c.id === id);
-                                if (capture) {
-                                    window.open(capture.url, '_blank');
-                                }
+                                if (capture) window.open(capture.url, '_blank');
                             }
                         });
                         
@@ -506,25 +483,21 @@
                         if (deleteBtn) {
                             deleteBtn.addEventListener('click', function(e) {
                                 e.stopPropagation();
-                                const id = item.dataset.id;
-                                toggleSelect(id);
+                                toggleSelect(item.dataset.id);
                             });
                         }
                     });
                 }
                 
-                btnSelectMode.textContent = selectMode ? '✓ Cancelar Seleção' : '☐ Selecionar';
+                btnSelectMode.textContent = selectMode ? '✓ Cancelar' : '☐ Selecionar';
                 btnSelectMode.classList.toggle('active', selectMode);
                 btnDeleteSelected.style.display = selectMode ? 'block' : 'none';
                 btnDeleteSelected.textContent = `🗑 Apagar (${selectedIds.size})`;
-                btnDeleteSelected.disabled = selectedIds.size === 0;
             }
             
             function toggleSelectMode() {
                 selectMode = !selectMode;
-                if (!selectMode) {
-                    selectedIds.clear();
-                }
+                if (!selectMode) selectedIds.clear();
                 updateUI();
             }
             
@@ -541,18 +514,16 @@
             
             function setFilter(filter) {
                 currentFilter = filter;
-                
                 document.querySelectorAll('.filter-btn').forEach(btn => {
                     btn.classList.toggle('active', btn.dataset.filter === filter);
                 });
-                
                 updateUI();
             }
             
             async function deleteSelected() {
                 if (selectedIds.size === 0) return;
                 
-                if (!confirm(`Apagar ${selectedIds.size} captura(s) selecionada(s)?`)) return;
+                if (!confirm(`Apagar ${selectedIds.size} captura(s)?`)) return;
                 
                 for (const id of selectedIds) {
                     const capture = allCaptures.find(c => c.id === id);
@@ -569,27 +540,22 @@
             }
             
             async function deleteAll() {
-                if (!confirm(`Tem certeza que deseja apagar TODAS as capturas da sessão ${currentSession}?`)) return;
-                
-                const { data: files } = await supabaseClient.storage
-                    .from('captures')
-                    .list(currentSession, { limit: 1000 });
-                
-                if (files) {
-                    const pathsToDelete = [];
-                    for (const file of files) {
-                        if (file.name) {
-                            const isPrint = file.name.includes('print');
-                            pathsToDelete.push(`${currentSession}/${isPrint ? 'print' : 'selfie'}/${file.name}`);
-                        }
-                    }
-                    
-                    if (pathsToDelete.length > 0) {
-                        await supabaseClient.storage.from('captures').remove(pathsToDelete);
-                    }
-                }
+                if (!confirm(`Apagar TODAS as capturas de ${currentSession}?`)) return;
                 
                 await supabaseClient.from('captures').delete().eq('codigo_sessao', currentSession);
+                
+                // Limpar storage também
+                const folders = ['print', 'selfie'];
+                for (const folder of folders) {
+                    const { data: files } = await supabaseClient.storage
+                        .from('captures')
+                        .list(`${currentSession}/${folder}`, { limit: 1000 });
+                    
+                    if (files && files.length > 0) {
+                        const paths = files.map(f => `${currentSession}/${folder}/${f.name}`);
+                        await supabaseClient.storage.from('captures').remove(paths);
+                    }
+                }
                 
                 selectedIds.clear();
                 selectMode = false;
@@ -603,8 +569,8 @@
                 const diff = now - date;
                 
                 if (diff < 60000) return 'Agora';
-                if (diff < 3600000) return `${Math.floor(diff/60000)}min atrás`;
-                if (diff < 86400000) return `${Math.floor(diff/3600000)}h atrás`;
+                if (diff < 3600000) return `${Math.floor(diff/60000)}min`;
+                if (diff < 86400000) return `${Math.floor(diff/3600000)}h`;
                 
                 return date.toLocaleDateString('pt-BR', {
                     day: '2-digit',
@@ -613,20 +579,6 @@
                     minute: '2-digit'
                 });
             }
-            
-            // Criar manifest.json dinamicamente
-            const manifest = {
-                name: 'Central Monitor',
-                short_name: 'Central',
-                start_url: '.',
-                display: 'standalone',
-                background_color: '#1a1a2e',
-                theme_color: '#1a1a2e'
-            };
-            
-            const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
-            const manifestUrl = URL.createObjectURL(manifestBlob);
-            document.querySelector('link[rel="manifest"]').href = manifestUrl;
             
             // Event Listeners
             btnLogin.addEventListener('click', login);
