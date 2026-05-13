@@ -544,7 +544,6 @@
                 
                 await supabaseClient.from('captures').delete().eq('codigo_sessao', currentSession);
                 
-                // Limpar storage também
                 const folders = ['print', 'selfie'];
                 for (const folder of folders) {
                     const { data: files } = await supabaseClient.storage
@@ -580,7 +579,6 @@
                 });
             }
             
-            // Event Listeners
             btnLogin.addEventListener('click', login);
             btnLogout.addEventListener('click', logout);
             btnSelectMode.addEventListener('click', toggleSelectMode);
