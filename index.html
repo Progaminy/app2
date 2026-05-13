@@ -7,179 +7,37 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0a0a0f">
     <title>Central</title>
-    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            background: #0a0a0f;
-            color: #e0e0e0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            min-height: 100vh;
-        }
-        
+        body { background: #0a0a0f; color: #e0e0e0; font-family: -apple-system, sans-serif; min-height: 100vh; }
         .container { max-width: 500px; margin: 0 auto; padding: 16px; }
-        
-        #loginScreen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            gap: 20px;
-        }
-        
+        #loginScreen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 20px; }
         #loginScreen h1 { font-size: 50px; }
-        #loginScreen p { color: #888; font-size: 14px; }
-        
-        #loginScreen input {
-            width: 220px;
-            padding: 14px;
-            background: #111;
-            border: 1px solid #333;
-            border-radius: 10px;
-            color: #fff;
-            font-size: 22px;
-            text-align: center;
-            letter-spacing: 6px;
-            text-transform: uppercase;
-            outline: none;
-        }
-        
-        #loginScreen input:focus { border-color: #00ff88; }
-        
-        #loginScreen button {
-            padding: 14px 40px;
-            background: #00ff88;
-            color: #000;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-        
-        .error { color: #ff3366; font-size: 13px; }
-        
+        #loginScreen input { width: 220px; padding: 14px; background: #111; border: 1px solid #333; border-radius: 10px; color: #fff; font-size: 22px; text-align: center; letter-spacing: 6px; text-transform: uppercase; outline: none; }
+        #loginScreen button { padding: 14px 40px; background: #00ff88; color: #000; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; }
+        .error { color: #ff3366; }
         #mainScreen { display: none; }
-        
-        .header {
-            background: #111;
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .header h2 { font-size: 18px; color: #00ff88; }
-        .header p { font-size: 11px; color: #888; margin-top: 4px; }
-        
-        .btn-sm {
-            background: rgba(255,51,102,0.2);
-            border: none;
-            color: #ff3366;
-            padding: 8px 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-        
-        .card {
-            background: #111;
-            border: 1px solid #222;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        
-        .card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            cursor: pointer;
-            display: block;
-        }
-        
-        .card-info {
-            padding: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
+        .header { background: #111; padding: 16px; border-radius: 12px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .header h2 { color: #00ff88; }
+        .gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .card { background: #111; border-radius: 10px; overflow: hidden; }
+        .card img { width: 100%; height: 200px; object-fit: cover; cursor: pointer; }
+        .card-info { padding: 10px; display: flex; justify-content: space-between; }
         .card-time { font-size: 11px; color: #888; }
-        
-        .btn-del {
-            background: rgba(255,51,102,0.2);
-            border: none;
-            color: #ff3366;
-            padding: 5px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 11px;
-        }
-        
-        .actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 16px;
-        }
-        
-        .btn {
-            flex: 1;
-            padding: 14px;
-            border: none;
-            border-radius: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            font-size: 13px;
-        }
-        
+        .btn-del { background: rgba(255,51,102,0.2); border: none; color: #ff3366; padding: 5px 10px; border-radius: 6px; cursor: pointer; }
+        .actions { display: flex; gap: 10px; margin-top: 16px; }
+        .btn { flex: 1; padding: 14px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; }
         .btn-danger { background: #ff3366; color: #fff; }
         .btn-outline { background: transparent; border: 1px solid #333; color: #fff; }
-        
-        .empty {
-            text-align: center;
-            padding: 60px 20px;
-            color: #555;
-        }
-        
-        .empty p:first-child { font-size: 18px; margin-bottom: 8px; }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 100;
-            justify-content: center;
-            align-items: center;
-        }
-        
+        .empty { text-align: center; padding: 60px; color: #555; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100; justify-content: center; align-items: center; }
         .modal.active { display: flex; }
-        
-        .modal img { max-width: 95%; max-height: 90vh; border-radius: 10px; }
-        
-        .modal-close {
-            position: absolute;
-            top: 20px; right: 20px;
-            color: #fff;
-            font-size: 32px;
-            cursor: pointer;
-        }
+        .modal img { max-width: 95%; max-height: 90vh; }
+        .modal-close { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 32px; cursor: pointer; }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- LOGIN -->
         <div id="loginScreen">
             <h1>📡</h1>
             <p>Código de Acesso</p>
@@ -187,184 +45,75 @@
             <button onclick="login()">ACESSAR</button>
             <p class="error" id="loginError"></p>
         </div>
-        
-        <!-- PRINCIPAL -->
         <div id="mainScreen">
             <div class="header">
-                <div>
-                    <h2>📡 CENTRAL</h2>
-                    <p id="stats">Carregando...</p>
-                </div>
-                <button class="btn-sm" onclick="logout()">SAIR</button>
+                <div><h2>📡 CENTRAL</h2><p id="stats"></p></div>
+                <button class="btn-del" onclick="logout()">SAIR</button>
             </div>
-            
             <div class="gallery" id="gallery"></div>
-            
-            <div class="empty" id="empty">
-                <p>📸 Nenhuma captura</p>
-                <p>Aguardando App 1...</p>
-            </div>
-            
+            <div class="empty" id="empty"><p>📸 Nenhuma captura</p></div>
             <div class="actions" id="actions" style="display:none;">
                 <button class="btn btn-danger" onclick="deleteAll()">🗑 APAGAR TUDO</button>
-                <button class="btn btn-outline" onclick="location.reload()">🔄 ATUALIZAR</button>
+                <button class="btn btn-outline" onclick="loadCaptures()">🔄 ATUALIZAR</button>
             </div>
         </div>
     </div>
-    
-    <!-- MODAL -->
     <div class="modal" id="modal" onclick="closeModal()">
         <span class="modal-close">✕</span>
-        <img id="modalImg" src="" alt="Captura">
+        <img id="modalImg" src="">
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyC-V2j8XkXHLuQYyDypnCLUbmoVNphmiLc",
-            authDomain: "olho-app.firebaseapp.com",
-            databaseURL: "https://olho-app-default-rtdb.firebaseio.com",
-            projectId: "olho-app",
-            storageBucket: "olho-app.firebasestorage.app",
-            messagingSenderId: "821092537697",
-            appId: "1:821092537697:web:a919ec6ea6a073d6472120"
-        };
-        
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        const storage = firebase.storage();
-        
+        const SUPABASE_URL = 'https://vlkobipdenduyismnkpm.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_qWeCNdiMyftZ6ZMYDF9u_A_bOplqpiA';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         const SESSION_CODE = 'MEUCEL1';
         let captures = [];
         
         function login() {
-            const code = document.getElementById('codeInput').value.trim().toUpperCase();
-            if (code === SESSION_CODE) {
+            if (document.getElementById('codeInput').value.trim().toUpperCase() === SESSION_CODE) {
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('mainScreen').style.display = 'block';
                 loadCaptures();
-                listenRealtime();
-            } else {
-                document.getElementById('loginError').textContent = 'Código inválido!';
             }
         }
+        function logout() { location.reload(); }
         
-        function logout() {
-            document.getElementById('loginScreen').style.display = 'flex';
-            document.getElementById('mainScreen').style.display = 'none';
-            document.getElementById('codeInput').value = '';
-            document.getElementById('loginError').textContent = '';
-        }
-        
-        function loadCaptures() {
-            database.ref('captures/' + SESSION_CODE).once('value', snapshot => {
-                captures = [];
-                const data = snapshot.val();
-                if (data) {
-                    Object.keys(data).forEach(key => {
-                        captures.push({ id: key, ...data[key] });
-                    });
-                    captures.sort((a, b) => b.id - a.id);
-                }
-                render();
-            });
-        }
-        
-        function listenRealtime() {
-            database.ref('captures/' + SESSION_CODE).on('child_added', snapshot => {
-                const exists = captures.find(c => c.id === snapshot.key);
-                if (!exists) {
-                    captures.unshift({ id: snapshot.key, ...snapshot.val() });
-                    render();
-                }
-            });
-            
-            database.ref('captures/' + SESSION_CODE).on('child_removed', snapshot => {
-                captures = captures.filter(c => c.id !== snapshot.key);
-                render();
-            });
-            
-            database.ref('sessions/' + SESSION_CODE).on('value', snapshot => {
-                const s = snapshot.val();
-                if (s) {
-                    document.getElementById('stats').textContent = 
-                        (s.totalCaptures || 0) + ' capturas | Última: ' + (s.lastCapture || '--');
-                }
-            });
+        async function loadCaptures() {
+            const { data } = await supabase.from('captures').select('*').eq('session_code', SESSION_CODE).order('id', { ascending: false }).limit(50);
+            captures = data || [];
+            render();
         }
         
         function render() {
-            const gallery = document.getElementById('gallery');
-            const empty = document.getElementById('empty');
-            const actions = document.getElementById('actions');
-            
-            if (captures.length === 0) {
-                gallery.innerHTML = '';
-                empty.style.display = 'block';
-                actions.style.display = 'none';
-                return;
-            }
-            
-            empty.style.display = 'none';
-            actions.style.display = 'flex';
-            
-            gallery.innerHTML = captures.map(c => `
-                <div class="card">
-                    <img src="${c.url}" onclick="openModal('${c.url}')" loading="lazy">
-                    <div class="card-info">
-                        <span class="card-time">${c.time || c.date}</span>
-                        <button class="btn-del" onclick="event.stopPropagation();deleteOne('${c.id}')">🗑</button>
-                    </div>
-                </div>
+            document.getElementById('empty').style.display = captures.length ? 'none' : 'block';
+            document.getElementById('actions').style.display = captures.length ? 'flex' : 'none';
+            document.getElementById('gallery').innerHTML = captures.map(c => `
+                <div class="card"><img src="${c.url}" onclick="openModal('${c.url}')"><div class="card-info"><span class="card-time">${c.time}</span><button class="btn-del" onclick="event.stopPropagation();deleteOne('${c.id}')">🗑</button></div></div>
             `).join('');
-            
-            document.getElementById('stats').textContent = 
-                captures.length + ' capturas | Última: ' + (captures[0]?.time || '--');
+            document.getElementById('stats').textContent = captures.length + ' capturas';
         }
         
         async function deleteOne(id) {
-            if (!confirm('Apagar esta captura?')) return;
-            
-            const capture = captures.find(c => c.id === id);
-            if (capture?.filename) {
-                await storage.ref(capture.filename).delete().catch(() => {});
-            }
-            await database.ref('captures/' + SESSION_CODE + '/' + id).remove();
-            captures = captures.filter(c => c.id !== id);
+            if (!confirm('Apagar?')) return;
+            const c = captures.find(x => x.id == id);
+            if (c?.storage_path) await supabase.storage.from('captures').remove([c.storage_path]);
+            await supabase.from('captures').delete().eq('id', id);
+            captures = captures.filter(x => x.id != id);
             render();
         }
         
         async function deleteAll() {
-            if (!confirm('⚠️ Apagar TODAS as capturas?')) return;
-            
-            const ref = storage.ref('captures/' + SESSION_CODE);
-            try {
-                const list = await ref.listAll();
-                for (const item of list.items) {
-                    await item.delete();
-                }
-            } catch(e) {}
-            
-            await database.ref('captures/' + SESSION_CODE).remove();
+            if (!confirm('TUDO?')) return;
+            await supabase.storage.from('captures').remove(captures.map(c => c.storage_path));
+            await supabase.from('captures').delete().eq('session_code', SESSION_CODE);
             captures = [];
             render();
         }
         
-        function openModal(url) {
-            document.getElementById('modalImg').src = url;
-            document.getElementById('modal').classList.add('active');
-        }
-        
-        function closeModal() {
-            document.getElementById('modal').classList.remove('active');
-        }
-        
-        document.getElementById('codeInput').addEventListener('keypress', e => {
-            if (e.key === 'Enter') login();
-        });
+        function openModal(url) { document.getElementById('modalImg').src = url; document.getElementById('modal').classList.add('active'); }
+        function closeModal() { document.getElementById('modal').classList.remove('active'); }
     </script>
 </body>
 </html>
