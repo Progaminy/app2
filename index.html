@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#1a1a2e">
-    <title>Central de Monitoramento</title>
+    <title>Central Monitor</title>
     <style>
         * {
             margin: 0;
@@ -91,6 +91,7 @@
         #dashboard {
             display: none;
             padding: 15px;
+            padding-bottom: 70px;
         }
         
         .header {
@@ -100,11 +101,34 @@
             margin-bottom: 20px;
             padding: 10px 0;
             border-bottom: 1px solid #333;
+            position: sticky;
+            top: 0;
+            background: #1a1a2e;
+            z-index: 10;
         }
         
         .header h2 {
             color: #00ff88;
             font-size: 18px;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .live-indicator {
+            width: 8px;
+            height: 8px;
+            background: #00ff00;
+            border-radius: 50%;
+            animation: piscar 1s infinite;
+        }
+        
+        @keyframes piscar {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
         
         #btnLogout {
@@ -114,47 +138,18 @@
             border-radius: 5px;
             color: #fff;
             cursor: pointer;
-        }
-        
-        .controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .controls button {
-            flex: 1;
-            min-width: 120px;
-            padding: 10px;
-            border: none;
-            border-radius: 8px;
-            color: #fff;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        
-        #btnSelectMode {
-            background: #3742fa;
-        }
-        
-        #btnSelectMode.active {
-            background: #5352ed;
-            box-shadow: 0 0 10px #5352ed;
-        }
-        
-        #btnDeleteSelected {
-            background: #ff6348;
-        }
-        
-        #btnDeleteAll {
-            background: #ff4757;
+            font-size: 12px;
         }
         
         .filters {
             display: flex;
             gap: 10px;
             margin-bottom: 15px;
+            position: sticky;
+            top: 60px;
+            background: #1a1a2e;
+            z-index: 10;
+            padding: 5px 0;
         }
         
         .filter-btn {
@@ -166,6 +161,7 @@
             color: #888;
             cursor: pointer;
             text-align: center;
+            font-size: 14px;
         }
         
         .filter-btn.active {
@@ -183,13 +179,13 @@
         .stat-box {
             flex: 1;
             background: #16213e;
-            padding: 10px;
+            padding: 15px;
             border-radius: 10px;
             text-align: center;
         }
         
         .stat-box .number {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
             color: #00ff88;
         }
@@ -197,6 +193,7 @@
         .stat-box .label {
             font-size: 12px;
             color: #888;
+            margin-top: 5px;
         }
         
         .gallery {
@@ -212,11 +209,17 @@
             border-radius: 10px;
             overflow: hidden;
             cursor: pointer;
-            border: 3px solid transparent;
+            border: 2px solid transparent;
+            transition: transform 0.2s;
+        }
+        
+        .gallery-item:active {
+            transform: scale(0.95);
         }
         
         .gallery-item.selected {
             border-color: #00ff88;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
         }
         
         .gallery-item img {
@@ -247,13 +250,13 @@
             position: absolute;
             top: 5px;
             left: 5px;
-            width: 25px;
-            height: 25px;
+            width: 30px;
+            height: 30px;
             background: rgba(255, 71, 87, 0.9);
             border: none;
             border-radius: 50%;
             color: #fff;
-            font-size: 14px;
+            font-size: 16px;
             cursor: pointer;
             display: none;
             align-items: center;
@@ -269,7 +272,7 @@
             bottom: 5px;
             left: 5px;
             right: 5px;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.8);
             padding: 2px 5px;
             border-radius: 3px;
             font-size: 10px;
@@ -289,6 +292,76 @@
             color: #888;
             grid-column: 1 / -1;
         }
+        
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #16213e;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+        
+        .bottom-bar button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        #btnSelectMode {
+            background: #3742fa;
+        }
+        
+        #btnSelectMode.active {
+            background: #5352ed;
+        }
+        
+        #btnDeleteSelected {
+            background: #ff6348;
+            display: none;
+        }
+        
+        #btnDeleteAll {
+            background: #ff4757;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #00ff88;
+            color: #1a1a2e;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            z-index: 1000;
+            animation: slideDown 0.3s ease;
+            display: none;
+        }
+        
+        @keyframes slideDown {
+            from { transform: translate(-50%, -100%); }
+            to { transform: translate(-50%, 0); }
+        }
+        
+        .new-badge {
+            background: #ff6348;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            margin-left: 5px;
+            animation: piscar 1s infinite;
+        }
     </style>
 </head>
 <body>
@@ -296,7 +369,7 @@
         <div class="login-box">
             <h1>🔒 Central Monitor</h1>
             <p>Digite o código da sessão</p>
-            <input type="text" id="codigoInput" placeholder="Ex: MEUCEL1" autocomplete="off">
+            <input type="text" id="codigoInput" placeholder="Ex: MEUCEL1" autocomplete="off" value="MEUCEL1">
             <button id="btnLogin">Acessar</button>
             <div class="error" id="loginError"></div>
         </div>
@@ -304,19 +377,16 @@
     
     <div id="dashboard">
         <div class="header">
-            <h2>📱 Monitor: <span id="sessionCode"></span></h2>
+            <div class="header-left">
+                <div class="live-indicator"></div>
+                <h2>📱 <span id="sessionCode"></span></h2>
+            </div>
             <button id="btnLogout">Sair</button>
-        </div>
-        
-        <div class="controls">
-            <button id="btnSelectMode">☐ Selecionar</button>
-            <button id="btnDeleteSelected" style="display:none;">🗑 Apagar Selecionados</button>
-            <button id="btnDeleteAll">🗑 Apagar Tudo</button>
         </div>
         
         <div class="filters">
             <div class="filter-btn active" data-filter="all">Todos</div>
-            <div class="filter-btn" data-filter="print">📸 Screenshots</div>
+            <div class="filter-btn" data-filter="print">📸 Prints</div>
             <div class="filter-btn" data-filter="selfie">🤳 Selfies</div>
         </div>
         
@@ -334,7 +404,15 @@
         <div id="gallery" class="gallery">
             <div class="loading">Carregando...</div>
         </div>
+        
+        <div class="bottom-bar">
+            <button id="btnSelectMode">☐ Selecionar</button>
+            <button id="btnDeleteSelected" style="display:none;">🗑 Apagar (<span id="selectedCount">0</span>)</button>
+            <button id="btnDeleteAll">🗑 Tudo</button>
+        </div>
     </div>
+    
+    <div class="toast" id="toast"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
@@ -350,6 +428,7 @@
             let selectMode = false;
             let currentFilter = 'all';
             let realtimeSubscription = null;
+            let lastCaptureCount = 0;
             
             const loginScreen = document.getElementById('loginScreen');
             const dashboard = document.getElementById('dashboard');
@@ -364,6 +443,16 @@
             const btnLogout = document.getElementById('btnLogout');
             const totalPrints = document.getElementById('totalPrints');
             const totalSelfies = document.getElementById('totalSelfies');
+            const selectedCount = document.getElementById('selectedCount');
+            const toast = document.getElementById('toast');
+            
+            function showToast(msg) {
+                toast.textContent = msg;
+                toast.style.display = 'block';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                }, 2000);
+            }
             
             function login() {
                 const codigo = codigoInput.value.trim().toUpperCase();
@@ -390,7 +479,7 @@
                 
                 loginScreen.style.display = 'flex';
                 dashboard.style.display = 'none';
-                codigoInput.value = '';
+                codigoInput.value = 'MEUCEL1';
                 loginError.textContent = '';
                 
                 if (realtimeSubscription) {
@@ -412,6 +501,7 @@
                     if (error) throw error;
                     
                     allCaptures = data || [];
+                    lastCaptureCount = allCaptures.length;
                     updateUI();
                 } catch (error) {
                     console.error('Erro ao carregar:', error);
@@ -433,10 +523,20 @@
                     }, (payload) => {
                         if (payload.eventType === 'INSERT') {
                             allCaptures.unshift(payload.new);
+                            showToast('📸 Nova captura!');
+                            // Vibração se disponível
+                            if (navigator.vibrate) {
+                                navigator.vibrate(200);
+                            }
                         } else if (payload.eventType === 'DELETE') {
                             allCaptures = allCaptures.filter(c => c.id !== payload.old.id);
                             selectedIds.delete(payload.old.id);
                         }
+                        
+                        if (allCaptures.length > lastCaptureCount) {
+                            lastCaptureCount = allCaptures.length;
+                        }
+                        
                         updateUI();
                     })
                     .subscribe();
@@ -455,14 +555,15 @@
                 totalSelfies.textContent = allCaptures.filter(c => c.tipo === 'selfie').length;
                 
                 if (filtered.length === 0) {
-                    gallery.innerHTML = '<div class="empty-state">Nenhuma captura</div>';
+                    gallery.innerHTML = '<div class="empty-state">📭 Nenhuma captura ainda</div>';
                 } else {
-                    gallery.innerHTML = filtered.map(capture => `
+                    gallery.innerHTML = filtered.map((capture, index) => `
                         <div class="gallery-item ${selectedIds.has(capture.id) ? 'selected' : ''}" data-id="${capture.id}">
                             <img src="${capture.url}" alt="${capture.tipo}" loading="lazy">
                             <span class="badge badge-${capture.tipo}">${capture.tipo === 'print' ? '📸' : '🤳'}</span>
                             ${selectMode ? '<button class="delete-btn">' + (selectedIds.has(capture.id) ? '✓' : '○') + '</button>' : ''}
                             <div class="time">${formatDate(capture.created_at)}</div>
+                            ${index === 0 && currentFilter === 'all' ? '<span class="new-badge">NOVO</span>' : ''}
                         </div>
                     `).join('');
                     
@@ -492,7 +593,7 @@
                 btnSelectMode.textContent = selectMode ? '✓ Cancelar' : '☐ Selecionar';
                 btnSelectMode.classList.toggle('active', selectMode);
                 btnDeleteSelected.style.display = selectMode ? 'block' : 'none';
-                btnDeleteSelected.textContent = `🗑 Apagar (${selectedIds.size})`;
+                selectedCount.textContent = selectedIds.size;
             }
             
             function toggleSelectMode() {
@@ -536,6 +637,7 @@
                 
                 selectedIds.clear();
                 selectMode = false;
+                showToast('✅ Capturas apagadas!');
                 await loadCaptures();
             }
             
@@ -558,6 +660,7 @@
                 
                 selectedIds.clear();
                 selectMode = false;
+                showToast('🗑 Todas as capturas apagadas!');
                 await loadCaptures();
             }
             
@@ -567,7 +670,8 @@
                 const now = new Date();
                 const diff = now - date;
                 
-                if (diff < 60000) return 'Agora';
+                if (diff < 10000) return '🔴 Agora';
+                if (diff < 60000) return `${Math.floor(diff/1000)}s`;
                 if (diff < 3600000) return `${Math.floor(diff/60000)}min`;
                 if (diff < 86400000) return `${Math.floor(diff/3600000)}h`;
                 
